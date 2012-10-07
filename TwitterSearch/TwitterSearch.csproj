@@ -99,11 +99,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\TwitterDateValueConverter.cs" />
     <Compile Include="Design\DesignTwitterFeed.cs" />
     <Compile Include="Model\ITwitterFeed.cs" />
     <Compile Include="Model\Tweet.cs" />
+    <Compile Include="Model\TwitterDelayMessage.cs" />
     <Compile Include="Model\TwitterFeed.cs" />
     <Compile Include="Model\TwitterFeedBase.cs" />
+    <Compile Include="Model\TwitterStatusMessage.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -111,6 +114,7 @@
     </Compile>
     <Compile Include="ReactiveHelpers.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="Model\Search.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Design\SampleTweets.xaml">
       <SubType>Designer</SubType>
@@ -162,6 +166,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\twitter-logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\delete.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

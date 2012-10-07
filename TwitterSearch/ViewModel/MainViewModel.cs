@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
+
 using TwitterSearch.Model;
 
 
@@ -14,7 +17,9 @@ namespace TwitterSearch.ViewModel
         private readonly ITwitterFeed _twitterFeed;
         private string _searchQuery;
         private IDisposable _currentSearch;
-        private int _throttleMs;
+        private const int DefaultThrottleMs = 5000;
+        private int? _throttleMs;
+        private double _twitterDelayMs;
 
         public MainViewModel()
         {
@@ -24,9 +29,16 @@ namespace TwitterSearch.ViewModel
         public MainViewModel(ITwitterFeed twitterFeed)
         {
             _twitterFeed = twitterFeed;
+            _twitterFeed.UserThrottleMs = DefaultThrottleMs;
+
             Tweets = new ObservableCollection<Tweet>();
+            Searches = new ObservableCollection<Search>();
             SubscribeToSearchCommand = new RelayCommand(SubscribeToNewSearch);
-            ThrottleMs = 2000;
+            RemoveSearchCommand = new RelayCommand<string>(RemoveSearch);
+            Messenger.Default.Register<TwitterDelayMessage>(this, m =>
+            {
+                TwitterDelayMs = m.CompletedIn * 1000;
+            });
         }
 
         public string SearchQuery
@@ -41,7 +53,7 @@ namespace TwitterSearch.ViewModel
 
         public int ThrottleMs
         {
-            get { return _throttleMs; }
+            get { return _throttleMs ?? DefaultThrottleMs; }
             set
             {
                 _throttleMs = value;
@@ -50,22 +62,42 @@ namespace TwitterSearch.ViewModel
             }
         }
 
+        public double TwitterDelayMs
+        {
+            get { return _twitterDelayMs; }
+            set
+            {
+                _twitterDelayMs = value;
+                RaisePropertyChanged("TwitterDelayMs");
+            }
+        }
+
+
         public RelayCommand SubscribeToSearchCommand { get; private set; }
+        public RelayCommand<string> RemoveSearchCommand { get; private set; }
 
         private void SubscribeToNewSearch()
         {
-            if (string.IsNullOrEmpty(SearchQuery))
+            if (string.IsNullOrEmpty(SearchQuery) ||
+                Searches.Count >= 4)
             {
                 return;
             }
 
-            if (_currentSearch != null)
-            {
-                _currentSearch.Dispose();
-            }
             var searchFeed = _twitterFeed.TweetsBySearch(SearchQuery);
-            _currentSearch = HandleNewTweets(searchFeed);
+            var searchObservable = HandleNewTweets(searchFeed);
+            Searches.Add(new Search(SearchQuery, searchObservable));
+            SearchQuery = "";
+        }
 
+        private void RemoveSearch(string searchText)
+        {
+            var existingSearch = Searches.FirstOrDefault(s => s.SearchText == searchText);
+            if (existingSearch != null)
+            {
+                existingSearch.SearchObservable.Dispose();
+                Searches.Remove(existingSearch);
+            }
         }
 
         private IDisposable HandleNewTweets(IObservable<Tweet> tweets)
@@ -74,5 +106,6 @@ namespace TwitterSearch.ViewModel
         }
 
         public ObservableCollection<Tweet> Tweets { get; set; }
+        public ObservableCollection<Search> Searches { get; set; }
     }
 }

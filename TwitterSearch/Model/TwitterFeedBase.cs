@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using System;
 using System.Reactive.Concurrency;
 using TweetSharp;
 
@@ -40,6 +41,16 @@ namespace TwitterSearch.Model
             {
                 return TimeSpan.FromMilliseconds(UserThrottleMs);
             }
+
+            // let's send a message if the limit is not infinite
+            Messenger.Default.Send(new TwitterStatusMessage
+            {
+                HourlyLimit = rateLimitStatus.HourlyLimit,
+                RawSource = rateLimitStatus.RawSource,
+                RemainingHits = rateLimitStatus.RemainingHits,
+                ResetTime = rateLimitStatus.ResetTime,
+                ResetTimeInSeconds = rateLimitStatus.ResetTimeInSeconds
+            });
 
             var timeTillReset = rateLimitStatus.ResetTime - Scheduler.Now;
             var remainingHits = rateLimitStatus.RemainingHits == 0 ? 1 : rateLimitStatus.RemainingHits;

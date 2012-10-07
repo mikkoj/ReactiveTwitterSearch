@@ -1,9 +1,9 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using System;
 using System.Linq;
 using System.Net;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-
 using TweetSharp;
 
 
@@ -32,8 +32,12 @@ namespace TwitterSearch.Model
                         {
                             if (response.StatusCode == HttpStatusCode.OK)
                             {
+                                Messenger.Default.Send(new TwitterDelayMessage
+                                {
+                                    CompletedIn = searchResult.CompletedIn
+                                });
                                 sinceId = searchResult.Statuses.Select(status => (long?) status.Id).Max() ?? sinceId;
-                                foreach (var tweet in searchResult.Statuses)
+                                foreach (var tweet in searchResult.Statuses.OrderBy(s => s.CreatedDate))
                                 {
                                     observer.OnNext(ParseTweet(tweet));
                                 }
@@ -53,7 +57,6 @@ namespace TwitterSearch.Model
                         {
                             if (sinceId.HasValue)
                             {
-                                Console.WriteLine("sinceId: " + sinceId.Value);
                                 Service.SearchSince(sinceId.Value, query, processNewTweets);
                             }
                             else

@@ -3,15 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ignore="http://www.ignore.com"
-        mc:Ignorable="d ignore"
+        xmlns:ignore="http://www.ignore.com" xmlns:local="clr-namespace:TwitterSearch.Common" mc:Ignorable="d ignore"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         d:DataContext="{d:DesignData Source=Design/SampleTweets.xaml}"
-        Height="645"
-        Width="641"
+        Height="698"
+        Width="626"
         Title="Twitter Search"
         FontFamily="Arial"
-        TextOptions.TextFormattingMode="Display" Icon="twitter-logo.ico">
+        TextOptions.TextFormattingMode="Display" Icon="twitter-logo.ico" WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <local:TwitterDateValueConverter x:Key="twitterDateFormatter"/>
+    </Window.Resources>
 
     <Grid>
         <Image HorizontalAlignment="Left" Height="56" Margin="10,10,0,0" VerticalAlignment="Top" Width="56" Source="Resources/twitter-logo.png"/>
@@ -22,7 +25,26 @@
                 <KeyBinding Command="{Binding Path=SubscribeToSearchCommand}" Key="Enter" />
             </TextBox.InputBindings>
         </TextBox>
-        <ListBox ItemsSource="{Binding Path=Tweets}" SelectionMode="Single" Margin="0,71,0,0" >
+        <ItemsControl ItemsSource="{Binding Path=Searches}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    HorizontalAlignment="Left" Height="18" Margin="74,56,0,0" VerticalAlignment="Top" Width="534" BorderThickness="0" VerticalContentAlignment="Center">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel IsItemsHost="True" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding SearchText}" Margin="9,0,0,0" FontSize="11" VerticalAlignment="Top" />
+                        <!--<Button Command="{Binding Path=RemoveSearchCommand}" CommandParameter="{Binding Path=SearchText}" ClickMode="Press" Cursor="Hand"
+                                Height="9" Width="9" Margin="3,1,0,0" BorderThickness="0" Background="White" BorderBrush="White" >
+                            <Image Source="pack://siteoforigin:,,,/Resources/delete.png" VerticalAlignment="Center" IsHitTestVisible="False" />
+                        </Button>-->
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ListBox ItemsSource="{Binding Path=Tweets}" SelectionMode="Single" Margin="0,76,0,0" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -39,20 +61,31 @@
                                 </TextBlock>
                             </StackPanel>
                             <TextBlock Text="{Binding Text}" Margin="10,3,0,3" MinHeight="20" MaxHeight="32" TextWrapping="Wrap" MaxWidth="490" LineHeight="16" />
-                            <TextBlock Text="{Binding Time}" Margin="10,0,0,0" />
+                            <TextBlock Text="{Binding Time, Converter={StaticResource twitterDateFormatter}}" Margin="10,0,0,0" />
                         </StackPanel>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListBox>
         <Slider HorizontalAlignment="Left" Margin="435,30,0,0" VerticalAlignment="Top" Width="74" Height="18" RenderTransformOrigin="0.474,0.414" VerticalContentAlignment="Center"
-                Maximum="2000" Minimum="50" Value="{Binding ThrottleMs}" IsDirectionReversed="True" TickFrequency="5" TickPlacement="BottomRight"/>
-        <Label HorizontalAlignment="Left" Margin="513,25,0,0" VerticalAlignment="Top">
+                Maximum="5000" Minimum="50" Value="{Binding ThrottleMs}" IsDirectionReversed="True" TickFrequency="25" TickPlacement="BottomRight"/>
+        <Label HorizontalAlignment="Left" Margin="513,25,0,0" VerticalAlignment="Top" Height="25" Width="59">
             <Label.Content>
                 <TextBlock>
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ms">
                             <Binding Path="ThrottleMs" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </Label.Content>
+        </Label>
+        <Label HorizontalAlignment="Center" VerticalAlignment="Top" Height="23" VerticalContentAlignment="Center" FontSize="11" HorizontalContentAlignment="Center" Margin="342,1,190,0" Padding="5" Width="86">
+            <Label.Content>
+                <TextBlock TextAlignment="Right" HorizontalAlignment="Right" Foreground="#FF575757" ClipToBounds="True">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="delay {0} ms">
+                            <Binding Path="TwitterDelayMs" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>

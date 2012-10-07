@@ -1,5 +1,6 @@
 ﻿<local:MainViewModel xmlns:local="clr-namespace:TwitterSearch.ViewModel"
-                     xmlns:model="clr-namespace:TwitterSearch.Model">
+                     xmlns:model="clr-namespace:TwitterSearch.Model"
+                     TwitterDelayMs="72">
     <local:MainViewModel.Tweets>
         <model:Tweet ProfileImageUrl="http://a0.twimg.com/sticky/default_profile_images/default_profile_5_normal.png"
                      ScreenName = "mikkoj" UserName = "Mikko Junnila" Text = "tweet tweet tweet tweet jee kjsdlkfj aslkjd asldkfj asdlfkj" />
@@ -14,4 +15,8 @@
         <model:Tweet ProfileImageUrl="http://a0.twimg.com/sticky/default_profile_images/default_profile_5_normal.png"
                      ScreenName = "jeejee" UserName = "Mikko Junnila" Text = "tweet tweet tweet tweet jee kjsdlkfj aslkjd asldkfj asdlfkj tweet tweet tweet tweet tweet tweet jee kjsdlkfj aslkjd asldkfj asdlfkj jee joo ddd" />
     </local:MainViewModel.Tweets>
+    <local:MainViewModel.Searches>
+        <model:Search SearchText="bieber" />
+        <model:Search SearchText="windows" />
+    </local:MainViewModel.Searches>
 </local:MainViewModel>
