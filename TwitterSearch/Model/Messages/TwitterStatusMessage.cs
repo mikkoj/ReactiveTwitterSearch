@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace TwitterSearch.Model
+namespace TwitterSearch.Model.Messages
 {
     public class TwitterStatusMessage
     {

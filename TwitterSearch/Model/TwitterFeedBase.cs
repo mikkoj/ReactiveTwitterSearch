@@ -2,6 +2,7 @@
 using System;
 using System.Reactive.Concurrency;
 using TweetSharp;
+using TwitterSearch.Model.Messages;
 
 namespace TwitterSearch.Model
 {

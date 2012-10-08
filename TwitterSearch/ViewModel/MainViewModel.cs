@@ -8,6 +8,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 
 using TwitterSearch.Model;
+using TwitterSearch.Model.Messages;
 
 
 namespace TwitterSearch.ViewModel
@@ -16,7 +17,6 @@ namespace TwitterSearch.ViewModel
     {
         private readonly ITwitterFeed _twitterFeed;
         private string _searchQuery;
-        private IDisposable _currentSearch;
         private const int DefaultThrottleMs = 5000;
         private int? _throttleMs;
         private double _twitterDelayMs;
@@ -32,13 +32,14 @@ namespace TwitterSearch.ViewModel
             _twitterFeed.UserThrottleMs = DefaultThrottleMs;
 
             Tweets = new ObservableCollection<Tweet>();
-            Searches = new ObservableCollection<Search>();
+            Searches = new ObservableCollection<SearchViewModel>();
             SubscribeToSearchCommand = new RelayCommand(SubscribeToNewSearch);
-            RemoveSearchCommand = new RelayCommand<string>(RemoveSearch);
             Messenger.Default.Register<TwitterDelayMessage>(this, m =>
             {
                 TwitterDelayMs = m.CompletedIn * 1000;
             });
+
+            Messenger.Default.Register<RemoveSearchTextMessage>(this, m => RemoveSearch(m.SearchTextToBeRemoved));
         }
 
         public string SearchQuery
@@ -74,7 +75,6 @@ namespace TwitterSearch.ViewModel
 
 
         public RelayCommand SubscribeToSearchCommand { get; private set; }
-        public RelayCommand<string> RemoveSearchCommand { get; private set; }
 
         private void SubscribeToNewSearch()
         {
@@ -86,7 +86,7 @@ namespace TwitterSearch.ViewModel
 
             var searchFeed = _twitterFeed.TweetsBySearch(SearchQuery);
             var searchObservable = HandleNewTweets(searchFeed);
-            Searches.Add(new Search(SearchQuery, searchObservable));
+            Searches.Add(new SearchViewModel(SearchQuery, searchObservable));
             SearchQuery = "";
         }
 
@@ -97,6 +97,10 @@ namespace TwitterSearch.ViewModel
             {
                 existingSearch.SearchObservable.Dispose();
                 Searches.Remove(existingSearch);
+                if (Searches.Count == 0)
+                {
+                    Tweets.Clear();
+                }
             }
         }
 
@@ -106,6 +110,6 @@ namespace TwitterSearch.ViewModel
         }
 
         public ObservableCollection<Tweet> Tweets { get; set; }
-        public ObservableCollection<Search> Searches { get; set; }
+        public ObservableCollection<SearchViewModel> Searches { get; set; }
     }
 }

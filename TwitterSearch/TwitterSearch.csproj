@@ -57,8 +57,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Laurent Bugnion (GalaSoft)\Mvvm Light Toolkit\Binaries\WPF4\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\TweetSharp.2.2.1\lib\4.0\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Reactive.Core">
@@ -102,11 +103,12 @@
     <Compile Include="Common\TwitterDateValueConverter.cs" />
     <Compile Include="Design\DesignTwitterFeed.cs" />
     <Compile Include="Model\ITwitterFeed.cs" />
+    <Compile Include="Model\Messages\RemoveSearchTextMessage.cs" />
+    <Compile Include="Model\Messages\TwitterDelayMessage.cs" />
+    <Compile Include="Model\Messages\TwitterStatusMessage.cs" />
     <Compile Include="Model\Tweet.cs" />
-    <Compile Include="Model\TwitterDelayMessage.cs" />
     <Compile Include="Model\TwitterFeed.cs" />
     <Compile Include="Model\TwitterFeedBase.cs" />
-    <Compile Include="Model\TwitterStatusMessage.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -114,7 +116,7 @@
     </Compile>
     <Compile Include="ReactiveHelpers.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="Model\Search.cs" />
+    <Compile Include="Model\SearchViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Design\SampleTweets.xaml">
       <SubType>Designer</SubType>
@@ -147,7 +149,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
@@ -168,8 +170,9 @@
     <None Include="Resources\twitter-logo.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\delete.png" />
+    <Resource Include="Resources\delete.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

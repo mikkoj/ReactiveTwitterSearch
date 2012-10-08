@@ -3,14 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ignore="http://www.ignore.com" xmlns:local="clr-namespace:TwitterSearch.Common" mc:Ignorable="d ignore"
+        xmlns:ignore="http://www.ignore.com" xmlns:local="clr-namespace:TwitterSearch.Common"
+        xmlns:Model="clr-namespace:TwitterSearch.Model" mc:Ignorable="d ignore"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         d:DataContext="{d:DesignData Source=Design/SampleTweets.xaml}"
         Height="698"
         Width="626"
         Title="Twitter Search"
         FontFamily="Arial"
-        TextOptions.TextFormattingMode="Display" Icon="twitter-logo.ico" WindowStartupLocation="CenterScreen">
+        TextOptions.TextFormattingMode="Display"
+        Icon="twitter-logo.ico"
+        WindowStartupLocation="CenterScreen"
+        FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}">
 
     <Window.Resources>
         <local:TwitterDateValueConverter x:Key="twitterDateFormatter"/>
@@ -18,7 +22,7 @@
 
     <Grid>
         <Image HorizontalAlignment="Left" Height="56" Margin="10,10,0,0" VerticalAlignment="Top" Width="56" Source="Resources/twitter-logo.png"/>
-        <TextBox HorizontalAlignment="Left" Height="29" Margin="82,24,0,0" TextWrapping="Wrap"
+        <TextBox Name="SearchTextBox" HorizontalAlignment="Left" Height="29" Margin="82,24,0,0" TextWrapping="Wrap"
                  VerticalAlignment="Top" Width="337" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" AcceptsReturn="True"
                  Text="{Binding Path=SearchQuery, UpdateSourceTrigger=PropertyChanged}">
             <TextBox.InputBindings>
@@ -26,27 +30,27 @@
             </TextBox.InputBindings>
         </TextBox>
         <ItemsControl ItemsSource="{Binding Path=Searches}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    HorizontalAlignment="Left" Height="18" Margin="74,56,0,0" VerticalAlignment="Top" Width="534" BorderThickness="0" VerticalContentAlignment="Center">
+                      HorizontalAlignment="Left" Height="18" Margin="74,56,0,0" VerticalAlignment="Top" Width="534" BorderThickness="0" VerticalContentAlignment="Center">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate DataType="Model:SearchViewModel">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding SearchText}" Margin="9,0,0,0" FontSize="11" VerticalAlignment="Top" />
-                        <!--<Button Command="{Binding Path=RemoveSearchCommand}" CommandParameter="{Binding Path=SearchText}" ClickMode="Press" Cursor="Hand"
-                                Height="9" Width="9" Margin="3,1,0,0" BorderThickness="0" Background="White" BorderBrush="White" >
-                            <Image Source="pack://siteoforigin:,,,/Resources/delete.png" VerticalAlignment="Center" IsHitTestVisible="False" />
-                        </Button>-->
+                        <TextBlock Text="{Binding SearchText}" Margin="9,-1,2,0" FontSize="11" VerticalAlignment="Top" Foreground="Black" />
+                        <Button Command="{Binding Path=RemoveSearchCommand}" CommandParameter="{Binding Path=SearchText}" ClickMode="Press" Cursor="Hand"
+                                Height="9" Width="9" Margin="0" BorderThickness="0" BorderBrush="White" Focusable="False" Foreground="{x:Null}" Background="{x:Null}" Padding="1" >
+                            <Image Source="Resources/delete.png" VerticalAlignment="Center" IsHitTestVisible="True" />
+                        </Button>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         <ListBox ItemsSource="{Binding Path=Tweets}" SelectionMode="Single" Margin="0,76,0,0" >
             <ItemsControl.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate DataType="Model:Tweet">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{Binding ProfileImageUrl}" MaxHeight="60" MaxWidth="60" Margin="4" MinHeight="60" MinWidth="60"/>
                         <StackPanel Orientation="Vertical" Margin="5">

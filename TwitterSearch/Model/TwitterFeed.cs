@@ -5,6 +5,7 @@ using System.Net;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using TweetSharp;
+using TwitterSearch.Model.Messages;
 
 
 namespace TwitterSearch.Model
