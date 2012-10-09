@@ -1,4 +1,8 @@
-TwitterSearch
-=============
+ReactiveTwitterSearch
+=====================
 
-WPF with MVVM-Light &amp; Reactive Extensions - Minimal search example.
+ - MVVM Light
+ - Reactive Extensions
+ - TweetSharp
+
+> Minimal Twitter-search example.
